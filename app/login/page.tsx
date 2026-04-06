@@ -95,6 +95,11 @@ export default function LoginPagina() {
         </div>
 
         <p style={{ textAlign: 'center', color: '#8888AA', marginTop: '24px', fontSize: '14px' }}>
+            <p style={{ textAlign: 'center', color: '#8888AA', marginTop: '16px', fontSize: '14px' }}>
+  <Link href="/wachtwoord-vergeten" style={{ color: '#8888AA', textDecoration: 'none' }}>
+    Wachtwoord vergeten?
+  </Link>
+</p>
           Nog geen account?{' '}
           <Link href="/register" style={{ color: '#FF6B2B', textDecoration: 'none', fontWeight: 600 }}>
             Maak er gratis een aan
