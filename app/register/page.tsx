@@ -13,50 +13,32 @@ export default function RegisterPagina() {
   const [fout, setFout] = useState('')
   const [laden, setLaden] = useState(false)
 
- async function handleRegister(e: React.FormEvent) {
-  e.preventDefault()
-  setLaden(true)
-  setFout('')
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault()
+    setLaden(true)
+    setFout('')
 
-  if (wachtwoord.length < 6) {
-    setFout('Wachtwoord moet minimaal 6 tekens zijn')
-    setLaden(false)
-    return
-  }
-
-  const supabase = maakSupabaseClient()
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password: wachtwoord,
-    options: {
-      data: { naam },
-      emailRedirectTo: `${window.location.origin}/dashboard`,
-    },
-  })
-
-  if (error) {
-    console.error('Registratie fout:', error.message)
-    setFout(`Fout: ${error.message}`)
-    setLaden(false)
-  } else if (data.user && data.user.identities && data.user.identities.length === 0) {
-    setFout('Dit email adres is al in gebruik. Log in of gebruik een ander adres.')
-    setLaden(false)
-  } else {
-    router.push('/dashboard')
-  }
-}
+    if (wachtwoord.length < 6) {
+      setFout('Wachtwoord moet minimaal 6 tekens zijn')
+      setLaden(false)
+      return
+    }
 
     const supabase = maakSupabaseClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password: wachtwoord,
       options: {
         data: { naam },
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     })
 
     if (error) {
-      setFout('Er is iets misgegaan. Probeer het opnieuw.')
+      setFout(`Fout: ${error.message}`)
+      setLaden(false)
+    } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+      setFout('Dit email adres is al in gebruik.')
       setLaden(false)
     } else {
       router.push('/dashboard')
@@ -67,7 +49,6 @@ export default function RegisterPagina() {
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ width: '100%', maxWidth: '440px' }}>
 
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '24px' }}>
             <span style={{ color: '#FF6B2B' }}>Woning</span>
@@ -78,7 +59,6 @@ export default function RegisterPagina() {
           </p>
         </div>
 
-        {/* Formulier */}
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '40px' }}>
 
           {fout && (
@@ -89,44 +69,38 @@ export default function RegisterPagina() {
 
           <form onSubmit={handleRegister}>
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>
-                Naam
-              </label>
+              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Naam</label>
               <input
                 type="text"
                 value={naam}
                 onChange={(e) => setNaam(e.target.value)}
                 placeholder="Jouw naam"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
               />
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>
-                Email
-              </label>
+              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="jij@voorbeeld.nl"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
               />
             </div>
 
             <div style={{ marginBottom: '28px' }}>
-              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>
-                Wachtwoord
-              </label>
+              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Wachtwoord</label>
               <input
                 type="password"
                 value={wachtwoord}
                 onChange={(e) => setWachtwoord(e.target.value)}
                 placeholder="Minimaal 6 tekens"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
               />
             </div>
 
