@@ -13,16 +13,38 @@ export default function RegisterPagina() {
   const [fout, setFout] = useState('')
   const [laden, setLaden] = useState(false)
 
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault()
-    setLaden(true)
-    setFout('')
+ async function handleRegister(e: React.FormEvent) {
+  e.preventDefault()
+  setLaden(true)
+  setFout('')
 
-    if (wachtwoord.length < 6) {
-      setFout('Wachtwoord moet minimaal 6 tekens zijn')
-      setLaden(false)
-      return
-    }
+  if (wachtwoord.length < 6) {
+    setFout('Wachtwoord moet minimaal 6 tekens zijn')
+    setLaden(false)
+    return
+  }
+
+  const supabase = maakSupabaseClient()
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: wachtwoord,
+    options: {
+      data: { naam },
+      emailRedirectTo: `${window.location.origin}/dashboard`,
+    },
+  })
+
+  if (error) {
+    console.error('Registratie fout:', error.message)
+    setFout(`Fout: ${error.message}`)
+    setLaden(false)
+  } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+    setFout('Dit email adres is al in gebruik. Log in of gebruik een ander adres.')
+    setLaden(false)
+  } else {
+    router.push('/dashboard')
+  }
+}
 
     const supabase = maakSupabaseClient()
     const { error } = await supabase.auth.signUp({
