@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stuurWoningEmail } from '../../../lib/email'
+import { stuurWoningEmail } from '../../lib/email'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
