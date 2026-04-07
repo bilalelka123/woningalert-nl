@@ -41,14 +41,16 @@ export default function Dashboard() {
           .lte('prijs', woonwensData.max_prijs)
           .order('gevonden_op', { ascending: false }).limit(50)
 
-        if (woonwensData.stad) {
-          const steden = Array.isArray(woonwensData.stad) ? woonwensData.stad : [woonwensData.stad]
+        // Alleen filteren op stad als er steden geselecteerd zijn
+        if (woonwensData.stad && Array.isArray(woonwensData.stad) && woonwensData.stad.length > 0) {
+          const steden = woonwensData.stad
           if (steden.length === 1) {
             query = query.ilike('stad', `%${steden[0]}%`)
-          } else if (steden.length > 1) {
+          } else {
             query = query.or(steden.map((s: string) => `stad.ilike.%${s}%`).join(','))
           }
         }
+        // Lege array = heel Noord-Brabant, geen stadfilter
 
         const { data } = await query
         setWoningen(data || [])
@@ -79,11 +81,13 @@ export default function Dashboard() {
 
   function stedenKort(stad: any) {
     const lijst = Array.isArray(stad) ? stad : [stad]
+    if (lijst.length === 0) return 'Heel Noord-Brabant'
     if (lijst.length <= 2) return lijst.join(', ')
     return `${lijst[0]}, ${lijst[1]} +${lijst.length - 2} meer`
   }
 
   function stedenVol(stad: any) {
+    if (Array.isArray(stad) && stad.length === 0) return 'Heel Noord-Brabant'
     return Array.isArray(stad) ? stad.join(', ') : stad
   }
 
@@ -185,33 +189,26 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Filter toggle */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', letterSpacing: '-0.3px', margin: 0 }}>
-            {toonAlles ? `Alle woningen (${alleWoningen.length})` : woonwensen ? `Jouw matches (${woningen.length})` : 'Alle woningen'}
+            {toonAlles ? `Alle woningen (${alleWoningen.length})` : `Jouw matches (${woningen.length})`}
           </h2>
           {woonwensen && (
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setToonAlles(false)}
-                style={{
-                  padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                  backgroundColor: !toonAlles ? '#FF6B2B' : '#1A1A28',
-                  color: !toonAlles ? 'white' : '#8888AA',
-                  border: !toonAlles ? 'none' : '1px solid #2A2A42',
-                }}
-              >
+              <button onClick={() => setToonAlles(false)} style={{
+                padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                backgroundColor: !toonAlles ? '#FF6B2B' : '#1A1A28',
+                color: !toonAlles ? 'white' : '#8888AA',
+                border: !toonAlles ? 'none' : '1px solid #2A2A42',
+              }}>
                 Mijn matches
               </button>
-              <button
-                onClick={() => setToonAlles(true)}
-                style={{
-                  padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                  backgroundColor: toonAlles ? '#FF6B2B' : '#1A1A28',
-                  color: toonAlles ? 'white' : '#8888AA',
-                  border: toonAlles ? 'none' : '1px solid #2A2A42',
-                }}
-              >
+              <button onClick={() => setToonAlles(true)} style={{
+                padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                backgroundColor: toonAlles ? '#FF6B2B' : '#1A1A28',
+                color: toonAlles ? 'white' : '#8888AA',
+                border: toonAlles ? 'none' : '1px solid #2A2A42',
+              }}>
                 Alles tonen
               </button>
             </div>
@@ -222,7 +219,7 @@ export default function Dashboard() {
           <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
             <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
-              {woonwensen ? 'Geen woningen gevonden' : 'Nog geen woningen'}
+              Geen woningen gevonden
             </div>
             <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
               Pas je woonwensen aan of klik op "Alles tonen"
@@ -251,16 +248,9 @@ export default function Dashboard() {
                   <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3, letterSpacing: '-0.2px' }}>
                     {woning.titel}
                   </h3>
-                  {woning.adres && (
-                    <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
-                      📍 {woning.adres}{woning.stad ? `, ${woning.stad}` : ''}
-                    </p>
-                  )}
-                  {!woning.adres && woning.stad && (
-                    <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
-                      📍 {woning.stad}
-                    </p>
-                  )}
+                  <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
+                    📍 {woning.adres ? `${woning.adres}, ` : ''}{woning.stad}
+                  </p>
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
                     {woning.prijs && <span style={{ color: '#FF6B2B', fontWeight: 700, fontSize: '16px' }}>€{woning.prijs},-/mnd</span>}
                     {woning.kamers && <span style={{ color: '#8888AA', fontSize: '13px' }}>🚪 {woning.kamers}</span>}
