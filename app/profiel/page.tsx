@@ -11,6 +11,7 @@ const TYPES = ['appartement', 'huis', 'studio', 'kamer']
 export default function ProfielPagina() {
   const router = useRouter()
   const [laden, setLaden] = useState(true)
+  const [gebruiker, setGebruiker] = useState<any>(null)
   const [opslaan, setOpslaan] = useState(false)
   const [opgeslagen, setOpgeslagen] = useState(false)
   const [woonwensId, setWoonwensId] = useState<string | null>(null)
@@ -51,7 +52,7 @@ export default function ProfielPagina() {
         setHuisdieren(data.huisdieren)
         setGemeubileerd(data.gemeubileerd)
       }
-
+setGebruiker(user)
       setLaden(false)
     }
 
@@ -139,12 +140,46 @@ export default function ProfielPagina() {
 
       <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 32px' }}>
 
-        <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
-          Jouw woonwensen
-        </h1>
-        <p style={{ color: '#8888AA', marginBottom: '40px' }}>
-          We zoeken woningen die precies bij jou passen
-        </p>
+     <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
+  Mijn profiel
+</h1>
+<p style={{ color: '#8888AA', marginBottom: '40px' }}>
+  Beheer je persoonlijke gegevens en woonwensen
+</p>
+
+{/* Persoonlijke gegevens */}
+<div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', marginBottom: '24px' }}>
+  <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+    Persoonlijke gegevens
+  </h2>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+    <div>
+      <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Naam</label>
+      <input
+        type="text"
+        defaultValue={gebruiker?.user_metadata?.naam || ''}
+        placeholder="Jouw naam"
+        style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
+      />
+    </div>
+    <div>
+      <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Email</label>
+      <input
+        type="email"
+        defaultValue={gebruiker?.email || ''}
+        disabled
+        style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#55557A', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, cursor: 'not-allowed' }}
+      />
+    </div>
+  </div>
+  <p style={{ color: '#55557A', fontSize: '13px', marginTop: '12px' }}>
+    Email adres kan niet worden gewijzigd.
+  </p>
+</div>
+
+<h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+  Woonwensen
+</h2>
 
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '40px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
