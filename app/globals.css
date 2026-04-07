@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -12,12 +12,16 @@
 body {
   background-color: #08080F;
   color: #F0F0F8;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4 {
   font-family: 'Syne', sans-serif;
+}
+
+nav a, nav button, nav span, nav div {
+  overflow: visible;
 }
 
 ::selection {
