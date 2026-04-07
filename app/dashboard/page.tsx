@@ -9,8 +9,10 @@ export default function Dashboard() {
   const router = useRouter()
   const [gebruiker, setGebruiker] = useState<any>(null)
   const [woningen, setWoningen] = useState<any[]>([])
+  const [alleWoningen, setAlleWoningen] = useState<any[]>([])
   const [woonwensen, setWoonwensen] = useState<any>(null)
   const [laden, setLaden] = useState(true)
+  const [toonAlles, setToonAlles] = useState(false)
 
   useEffect(() => {
     async function laadData() {
@@ -23,12 +25,21 @@ export default function Dashboard() {
         .from('woonwensen').select('*').eq('user_id', user.id).single()
       setWoonwensen(woonwensData)
 
+      // Haal alle woningen op
+      const { data: alle } = await supabase
+        .from('gevonden_woningen').select('*')
+        .eq('actief', true)
+        .order('gevonden_op', { ascending: false })
+        .limit(100)
+      setAlleWoningen(alle || [])
+
+      // Haal gefilterde woningen op
       if (woonwensData) {
         let query = supabase.from('gevonden_woningen').select('*')
           .eq('actief', true)
           .gte('prijs', woonwensData.min_prijs)
           .lte('prijs', woonwensData.max_prijs)
-          .order('gevonden_op', { ascending: false }).limit(20)
+          .order('gevonden_op', { ascending: false }).limit(50)
 
         if (woonwensData.stad) {
           const steden = Array.isArray(woonwensData.stad) ? woonwensData.stad : [woonwensData.stad]
@@ -42,9 +53,7 @@ export default function Dashboard() {
         const { data } = await query
         setWoningen(data || [])
       } else {
-        const { data } = await supabase.from('gevonden_woningen').select('*')
-          .eq('actief', true).order('gevonden_op', { ascending: false }).limit(20)
-        setWoningen(data || [])
+        setWoningen(alle || [])
       }
       setLaden(false)
     }
@@ -68,17 +77,17 @@ export default function Dashboard() {
     return (new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60) < 24
   }
 
-  // Korte versie van steden — max 2 tonen, daarna "+X meer"
   function stedenKort(stad: any) {
     const lijst = Array.isArray(stad) ? stad : [stad]
     if (lijst.length <= 2) return lijst.join(', ')
     return `${lijst[0]}, ${lijst[1]} +${lijst.length - 2} meer`
   }
 
-  // Volledige versie voor tooltip/title
   function stedenVol(stad: any) {
     return Array.isArray(stad) ? stad.join(', ') : stad
   }
+
+  const getoondWoningen = toonAlles ? alleWoningen : woningen
 
   if (laden) {
     return (
@@ -128,7 +137,7 @@ export default function Dashboard() {
           {[
             { label: 'Gevonden', waarde: woningen.length, kleur: '#FF6B2B' },
             { label: 'Nieuw vandaag', waarde: woningen.filter(w => isNieuw(w.gevonden_op)).length, kleur: '#FFB800' },
-            { label: 'Platforms', waarde: 3, kleur: '#8888AA' },
+            { label: 'Totaal aanbod', waarde: alleWoningen.length, kleur: '#8888AA' },
           ].map((stat) => (
             <div key={stat.label} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '12px', padding: '14px 10px' }}>
               <div style={{ color: stat.kleur, fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 800, marginBottom: '2px' }}>{stat.waarde}</div>
@@ -176,18 +185,47 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px', letterSpacing: '-0.3px' }}>
-          {woonwensen ? `Woningen in ${stedenKort(woonwensen.stad)}` : 'Alle woningen'}
-        </h2>
+        {/* Filter toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', letterSpacing: '-0.3px', margin: 0 }}>
+            {toonAlles ? `Alle woningen (${alleWoningen.length})` : woonwensen ? `Jouw matches (${woningen.length})` : 'Alle woningen'}
+          </h2>
+          {woonwensen && (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setToonAlles(false)}
+                style={{
+                  padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  backgroundColor: !toonAlles ? '#FF6B2B' : '#1A1A28',
+                  color: !toonAlles ? 'white' : '#8888AA',
+                  border: !toonAlles ? 'none' : '1px solid #2A2A42',
+                }}
+              >
+                Mijn matches
+              </button>
+              <button
+                onClick={() => setToonAlles(true)}
+                style={{
+                  padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  backgroundColor: toonAlles ? '#FF6B2B' : '#1A1A28',
+                  color: toonAlles ? 'white' : '#8888AA',
+                  border: toonAlles ? 'none' : '1px solid #2A2A42',
+                }}
+              >
+                Alles tonen
+              </button>
+            </div>
+          )}
+        </div>
 
-        {woningen.length === 0 ? (
+        {getoondWoningen.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
             <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
-              {woonwensen ? `Geen woningen in ${stedenKort(woonwensen.stad)}` : 'Nog geen woningen'}
+              {woonwensen ? 'Geen woningen gevonden' : 'Nog geen woningen'}
             </div>
             <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
-              {woonwensen ? 'Pas je zoekcriteria aan' : 'Stel woonwensen in'}
+              Pas je woonwensen aan of klik op "Alles tonen"
             </div>
             <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '10px 20px', borderRadius: '10px', fontSize: '14px' }}>
               Woonwensen aanpassen
@@ -195,7 +233,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
-            {woningen.map((woning) => (
+            {getoondWoningen.map((woning) => (
               <div key={woning.id} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', overflow: 'hidden' }}>
                 <div style={{ position: 'relative', height: '180px', backgroundColor: '#1A1A28' }}>
                   {woning.foto_url
@@ -216,6 +254,11 @@ export default function Dashboard() {
                   {woning.adres && (
                     <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
                       📍 {woning.adres}{woning.stad ? `, ${woning.stad}` : ''}
+                    </p>
+                  )}
+                  {!woning.adres && woning.stad && (
+                    <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
+                      📍 {woning.stad}
                     </p>
                   )}
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
