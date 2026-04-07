@@ -50,7 +50,7 @@ export default function WoningPlaatsen() {
       oppervlakte: oppervlakte ? parseInt(oppervlakte) : null,
       url,
       platform: 'verhuurder',
-      actief: false, // Moet eerst goedgekeurd worden
+      actief: false,
       gevonden_op: new Date().toISOString(),
     })
 
@@ -86,7 +86,7 @@ export default function WoningPlaatsen() {
 
   if (verzonden) {
     return (
-      <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans', sans-serif", padding: '20px' }}>
+      <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif", padding: '20px' }}>
         <div style={{ textAlign: 'center', maxWidth: '500px' }}>
           <div style={{ fontSize: '60px', marginBottom: '20px' }}>🎉</div>
           <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '28px', color: '#F0F0F8', marginBottom: '12px' }}>
@@ -104,22 +104,20 @@ export default function WoningPlaatsen() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
-      {/* Navigatie */}
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', lineHeight: '1.5', paddingBottom: '2px' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </Link>
-        <Link href="/login" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+        <Link href="/login" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
           Inloggen
         </Link>
       </nav>
 
       <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 16px' }}>
 
-        {/* Header */}
         <div style={{ marginBottom: '40px' }}>
           <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(24px, 5vw, 36px)', color: '#F0F0F8', marginBottom: '12px' }}>
             Woning plaatsen 🏠
@@ -138,7 +136,6 @@ export default function WoningPlaatsen() {
 
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-          {/* Contactgegevens */}
           <div>
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
               Jouw gegevens
@@ -157,14 +154,12 @@ export default function WoningPlaatsen() {
 
           <div style={{ borderTop: '1px solid #2A2A42' }} />
 
-          {/* Woninggegevens */}
           <div>
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
               Woninggegevens <span style={{ color: '#FF6B2B', fontSize: '13px' }}>* verplicht</span>
             </h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-
               <div>
                 <label style={labelStijl}>Titel van de woning *</label>
                 <input type="text" value={titel} onChange={e => setTitel(e.target.value)} placeholder="Ruim appartement centrum Den Bosch" style={invoerStijl} />
@@ -226,7 +221,6 @@ export default function WoningPlaatsen() {
                 <textarea value={beschrijving} onChange={e => setBeschrijving(e.target.value)} placeholder="Beschrijf de woning, bijzonderheden, voorwaarden..." rows={4}
                   style={{ ...invoerStijl, resize: 'vertical' as const }} />
               </div>
-
             </div>
           </div>
 

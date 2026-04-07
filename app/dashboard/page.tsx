@@ -87,10 +87,12 @@ export default function Dashboard() {
 
       {/* Navigatie */}
       <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <Link href="/dashboard" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          <span style={{ color: '#FF6B2B' }}>Woning</span>
-          <span style={{ color: '#F0F0F8' }}>Alert NL</span>
-        </Link>
+       <Link href="/dashboard" style={{ textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
+  <span className="logo-tekst">
+    <span style={{ color: '#FF6B2B' }}>Woning</span>
+    <span style={{ color: '#F0F0F8' }}>Alert NL</span>
+  </span>
+</Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           <Link href="/woning-plaatsen" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '12px', whiteSpace: 'nowrap', display: 'none' }} className="md:block">
             Woning plaatsen
