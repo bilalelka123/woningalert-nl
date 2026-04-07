@@ -74,6 +74,7 @@ export default function WoningPlaatsen() {
     fontSize: '15px',
     outline: 'none',
     boxSizing: 'border-box' as const,
+    fontFamily: "'Inter', sans-serif",
   }
 
   const labelStijl = {
@@ -89,7 +90,7 @@ export default function WoningPlaatsen() {
       <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif", padding: '20px' }}>
         <div style={{ textAlign: 'center', maxWidth: '500px' }}>
           <div style={{ fontSize: '60px', marginBottom: '20px' }}>🎉</div>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '28px', color: '#F0F0F8', marginBottom: '12px' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '28px', color: '#F0F0F8', marginBottom: '12px', letterSpacing: '-0.5px' }}>
             Woning ingediend!
           </h1>
           <p style={{ color: '#8888AA', marginBottom: '32px', lineHeight: 1.6 }}>
@@ -106,20 +107,25 @@ export default function WoningPlaatsen() {
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
         <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0, letterSpacing: '-0.5px' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </Link>
-        <Link href="/login" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '13px', fontWeight: 600, padding: '6px 14px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-          Inloggen
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Link href="/" style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '8px 16px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+            ← Terug
+          </Link>
+          <Link href="/login" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 700, padding: '8px 16px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+            Inloggen
+          </Link>
+        </div>
       </nav>
 
       <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 16px' }}>
 
         <div style={{ marginBottom: '40px' }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(24px, 5vw, 36px)', color: '#F0F0F8', marginBottom: '12px' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 'clamp(24px, 5vw, 36px)', color: '#F0F0F8', marginBottom: '12px', letterSpacing: '-1px' }}>
             Woning plaatsen 🏠
           </h1>
           <p style={{ color: '#8888AA', fontSize: '15px', lineHeight: 1.6 }}>
@@ -137,7 +143,7 @@ export default function WoningPlaatsen() {
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>Jouw gegevens</h2>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>Jouw gegevens</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
                 <label style={labelStijl}>Naam</label>
@@ -153,7 +159,7 @@ export default function WoningPlaatsen() {
           <div style={{ borderTop: '1px solid #2A2A42' }} />
 
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
               Woninggegevens <span style={{ color: '#FF6B2B', fontSize: '13px' }}>* verplicht</span>
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -196,7 +202,8 @@ export default function WoningPlaatsen() {
                       border: type === t ? '2px solid #FF6B2B' : '1px solid #2A2A42',
                       backgroundColor: type === t ? 'rgba(255,107,43,0.1)' : '#1A1A28',
                       color: type === t ? '#FF6B2B' : '#8888AA',
-                      fontWeight: 600, cursor: 'pointer', fontSize: '13px', textTransform: 'capitalize',
+                      fontWeight: 600, cursor: 'pointer', fontSize: '13px',
+                      textTransform: 'capitalize', fontFamily: "'Inter', sans-serif",
                     }}>
                       {t}
                     </button>
@@ -226,6 +233,7 @@ export default function WoningPlaatsen() {
             width: '100%', backgroundColor: bezig ? '#8888AA' : '#FF6B2B',
             color: 'white', border: 'none', padding: '16px', borderRadius: '12px',
             fontSize: '16px', fontWeight: 700, cursor: bezig ? 'not-allowed' : 'pointer',
+            fontFamily: "'Inter', sans-serif",
           }}>
             {bezig ? 'Bezig...' : 'Woning gratis plaatsen →'}
           </button>
