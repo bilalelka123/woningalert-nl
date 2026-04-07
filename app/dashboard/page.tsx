@@ -29,7 +29,14 @@ export default function Dashboard() {
           .gte('prijs', woonwensData.min_prijs)
           .lte('prijs', woonwensData.max_prijs)
           .order('gevonden_op', { ascending: false }).limit(20)
-        if (woonwensData.stad) query = query.ilike('stad', `%${woonwensData.stad}%`)
+        if (woonwensData.stad) {
+  const steden = Array.isArray(woonwensData.stad) ? woonwensData.stad : [woonwensData.stad]
+  if (steden.length === 1) {
+    query = query.ilike('stad', `%${steden[0]}%`)
+  } else if (steden.length > 1) {
+    query = query.or(steden.map((s: string) => `stad.ilike.%${s}%`).join(','))
+  }
+}
         const { data } = await query
         setWoningen(data || [])
       } else {
@@ -75,20 +82,20 @@ export default function Dashboard() {
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
 
       {/* Navigatie */}
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap' }}>
-          <span style={{ color: '#FF6B2B' }}>Woning</span>
-          <span style={{ color: '#F0F0F8' }}>Alert NL</span>
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Link href="/profiel" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
-            ⚙️ Wensen
-          </Link>
-          <button onClick={uitloggen} style={{ backgroundColor: 'transparent', border: '1px solid #2A2A42', color: '#8888AA', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', whiteSpace: 'nowrap' }}>
-            Uitloggen
-          </button>
-        </div>
-      </nav>
+<nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+  <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+    <span style={{ color: '#FF6B2B' }}>Woning</span>
+    <span style={{ color: '#F0F0F8' }}>Alert NL</span>
+  </Link>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+    <Link href="/profiel" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '12px', whiteSpace: 'nowrap' }}>
+      ⚙ Wensen
+    </Link>
+    <button onClick={uitloggen} style={{ backgroundColor: 'transparent', border: '1px solid #2A2A42', color: '#8888AA', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+      Uitloggen
+    </button>
+  </div>
+</nav>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 16px' }}>
 
@@ -99,7 +106,7 @@ export default function Dashboard() {
           </h1>
           <p style={{ color: '#8888AA', fontSize: '14px' }}>
             {woonwensen
-              ? `${woonwensen.stad} · €${woonwensen.min_prijs}–€${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
+              ? `${Array.isArray(woonwensen.stad) ? woonwensen.stad.join(', ') : woonwensen.stad} · €${woonwensen.min_prijs}–€${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
               : 'Stel je woonwensen in voor gepersonaliseerde resultaten'
             }
           </p>
@@ -135,7 +142,7 @@ export default function Dashboard() {
           <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               {[
-                { label: '📍', waarde: woonwensen.stad },
+                { label: '📍', waarde: Array.isArray(woonwensen.stad) ? woonwensen.stad.join(', ') : woonwensen.stad },
                 { label: '💰', waarde: `€${woonwensen.min_prijs}–€${woonwensen.max_prijs}` },
                 { label: '🚪', waarde: `min. ${woonwensen.min_kamers}` },
               ].map(item => (
@@ -153,14 +160,14 @@ export default function Dashboard() {
 
         {/* Woningen */}
         <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px' }}>
-          {woonwensen ? `Woningen in ${woonwensen.stad}` : 'Alle woningen'}
+          {woonwensen ? `Woningen in ${Array.isArray(woonwensen.stad) ? woonwensen.stad.join(', ') : woonwensen.stad}` : 'Alle woningen'}
         </h2>
 
         {woningen.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
             <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
-              {woonwensen ? `Geen woningen in ${woonwensen.stad}` : 'Nog geen woningen'}
+              {woonwensen ? `Geen woningen in ${Array.isArray(woonwensen.stad) ? woonwensen.stad.join(', ') : woonwensen.stad}` : 'Nog geen woningen'}
             </div>
             <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
               {woonwensen ? 'Pas je zoekcriteria aan' : 'Stel woonwensen in'}

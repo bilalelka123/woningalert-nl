@@ -5,7 +5,17 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { maakSupabaseClient } from '../../lib/supabase'
 
-const STEDEN = ['Tilburg', 'Eindhoven', 'Breda', 'Den Bosch', 'Helmond', 'Roosendaal', 'Bergen op Zoom', 'Oss', 'Waalwijk']
+const STEDEN = [
+  'Den Bosch', 'Tilburg', 'Eindhoven', 'Breda', 'Helmond',
+  'Roosendaal', 'Bergen op Zoom', 'Oss', 'Waalwijk', 'Boxtel',
+  'Schijndel', 'Veghel', 'Uden', 'Vught', 'Sint-Michielsgestel',
+  'Drunen', 'Heusden', 'Bernheze', 'Meierijstad', 'Landerd',
+  'Nuenen', 'Son en Breugel', 'Best', 'Oisterwijk', 'Haaren',
+  'Loon op Zand', 'Dongen', 'Gilze en Rijen', 'Oosterhout',
+  'Geertruidenberg', 'Werkendam', 'Altena', 'Steenbergen',
+  'Halderberge', 'Rucphen', 'Zundert', 'Moerdijk', 'Drimmelen',
+]
+
 const TYPES = ['appartement', 'huis', 'studio', 'kamer']
 
 export default function ProfielPagina() {
@@ -16,7 +26,7 @@ export default function ProfielPagina() {
   const [opgeslagen, setOpgeslagen] = useState(false)
   const [woonwensId, setWoonwensId] = useState<string | null>(null)
 
-  const [stad, setStad] = useState('Eindhoven')
+  const [steden, setSteden] = useState<string[]>(['Den Bosch'])
   const [straal, setStraal] = useState(10)
   const [minPrijs, setMinPrijs] = useState(400)
   const [maxPrijs, setMaxPrijs] = useState(1200)
@@ -43,7 +53,12 @@ export default function ProfielPagina() {
 
       if (data) {
         setWoonwensId(data.id)
-        setStad(data.stad)
+        // Ondersteuning voor oude (string) en nieuwe (array) data
+        if (Array.isArray(data.stad)) {
+          setSteden(data.stad)
+        } else if (data.stad) {
+          setSteden([data.stad])
+        }
         setStraal(data.straal_km)
         setMinPrijs(data.min_prijs)
         setMaxPrijs(data.max_prijs)
@@ -52,7 +67,8 @@ export default function ProfielPagina() {
         setHuisdieren(data.huisdieren)
         setGemeubileerd(data.gemeubileerd)
       }
-setGebruiker(user)
+
+      setGebruiker(user)
       setLaden(false)
     }
 
@@ -67,7 +83,7 @@ setGebruiker(user)
 
     const gegevens = {
       user_id: user.id,
-      stad,
+      stad: steden,
       straal_km: straal,
       min_prijs: minPrijs,
       max_prijs: maxPrijs,
@@ -88,6 +104,12 @@ setGebruiker(user)
     setOpgeslagen(true)
     setOpslaan(false)
     setTimeout(() => setOpgeslagen(false), 3000)
+  }
+
+  function toggleStad(stad: string) {
+    setSteden(prev =>
+      prev.includes(stad) ? prev.filter(s => s !== stad) : [...prev, stad]
+    )
   }
 
   function toggleType(type: string) {
@@ -128,67 +150,93 @@ setGebruiker(user)
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
 
       {/* Navigatie */}
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px' }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </Link>
-        <Link href="/dashboard" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '14px' }}>
-          ← Terug naar dashboard
+        <Link href="/dashboard" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+          ← Dashboard
         </Link>
       </nav>
 
-      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 32px' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 16px' }}>
 
-     <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
-  Mijn profiel
-</h1>
-<p style={{ color: '#8888AA', marginBottom: '40px' }}>
-  Beheer je persoonlijke gegevens en woonwensen
-</p>
+        <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
+          Mijn profiel
+        </h1>
+        <p style={{ color: '#8888AA', marginBottom: '40px' }}>
+          Beheer je persoonlijke gegevens en woonwensen
+        </p>
 
-{/* Persoonlijke gegevens */}
-<div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', marginBottom: '24px' }}>
-  <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
-    Persoonlijke gegevens
-  </h2>
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-    <div>
-      <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Naam</label>
-      <input
-        type="text"
-        defaultValue={gebruiker?.user_metadata?.naam || ''}
-        placeholder="Jouw naam"
-        style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
-      />
-    </div>
-    <div>
-      <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Email</label>
-      <input
-        type="email"
-        defaultValue={gebruiker?.email || ''}
-        disabled
-        style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#55557A', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, cursor: 'not-allowed' }}
-      />
-    </div>
-  </div>
-  <p style={{ color: '#55557A', fontSize: '13px', marginTop: '12px' }}>
-    Email adres kan niet worden gewijzigd.
-  </p>
-</div>
+        {/* Persoonlijke gegevens */}
+        <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', marginBottom: '24px' }}>
+          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+            Persoonlijke gegevens
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Naam</label>
+              <input
+                type="text"
+                defaultValue={gebruiker?.user_metadata?.naam || ''}
+                placeholder="Jouw naam"
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', color: '#F0F0F8', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Email</label>
+              <input
+                type="email"
+                defaultValue={gebruiker?.email || ''}
+                disabled
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#55557A', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, cursor: 'not-allowed' }}
+              />
+            </div>
+          </div>
+          <p style={{ color: '#55557A', fontSize: '13px', marginTop: '12px' }}>
+            Email adres kan niet worden gewijzigd.
+          </p>
+        </div>
 
-<h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
-  Woonwensen
-</h2>
+        <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+          Woonwensen
+        </h2>
 
-        <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '40px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+        <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
-          {/* Stad */}
+          {/* Steden — meerdere selecteerbaar */}
           <div>
-            <label style={labelStijl}>Stad</label>
-            <select value={stad} onChange={e => setStad(e.target.value)} style={{ ...invoerStijl, cursor: 'pointer' }}>
-              {STEDEN.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+            <label style={labelStijl}>
+              Plaatsen{' '}
+              <span style={{ color: '#FF6B2B' }}>
+                {steden.length === 0 ? '— kies minimaal één' : `(${steden.length} geselecteerd)`}
+              </span>
+            </label>
+            <p style={{ color: '#55557A', fontSize: '12px', marginBottom: '12px' }}>
+              Klik op meerdere plaatsen om alerts voor te ontvangen
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {STEDEN.map(s => (
+                <button
+                  key={s}
+                  onClick={() => toggleStad(s)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '20px',
+                    border: steden.includes(s) ? '2px solid #FF6B2B' : '1px solid #2A2A42',
+                    backgroundColor: steden.includes(s) ? 'rgba(255,107,43,0.1)' : '#1A1A28',
+                    color: steden.includes(s) ? '#FF6B2B' : '#8888AA',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {steden.includes(s) ? '✓ ' : ''}{s}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Straal */}
@@ -214,23 +262,11 @@ setGebruiker(user)
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <div style={{ color: '#8888AA', fontSize: '12px', marginBottom: '6px' }}>Minimum</div>
-                <input
-                  type="range"
-                  min={400} max={2000} step={50}
-                  value={minPrijs}
-                  onChange={e => setMinPrijs(Number(e.target.value))}
-                  style={{ width: '100%', accentColor: '#FF6B2B' }}
-                />
+                <input type="range" min={400} max={2000} step={50} value={minPrijs} onChange={e => setMinPrijs(Number(e.target.value))} style={{ width: '100%', accentColor: '#FF6B2B' }} />
               </div>
               <div>
                 <div style={{ color: '#8888AA', fontSize: '12px', marginBottom: '6px' }}>Maximum</div>
-                <input
-                  type="range"
-                  min={400} max={2000} step={50}
-                  value={maxPrijs}
-                  onChange={e => setMaxPrijs(Number(e.target.value))}
-                  style={{ width: '100%', accentColor: '#FF6B2B' }}
-                />
+                <input type="range" min={400} max={2000} step={50} value={maxPrijs} onChange={e => setMaxPrijs(Number(e.target.value))} style={{ width: '100%', accentColor: '#FF6B2B' }} />
               </div>
             </div>
           </div>
@@ -240,21 +276,7 @@ setGebruiker(user)
             <label style={labelStijl}>Minimaal aantal kamers</label>
             <div style={{ display: 'flex', gap: '10px' }}>
               {[1, 2, 3, 4, 5].map(k => (
-                <button
-                  key={k}
-                  onClick={() => setMinKamers(k)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border: minKamers === k ? '2px solid #FF6B2B' : '1px solid #2A2A42',
-                    backgroundColor: minKamers === k ? 'rgba(255,107,43,0.1)' : '#1A1A28',
-                    color: minKamers === k ? '#FF6B2B' : '#8888AA',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    fontSize: '15px',
-                  }}
-                >
+                <button key={k} onClick={() => setMinKamers(k)} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: minKamers === k ? '2px solid #FF6B2B' : '1px solid #2A2A42', backgroundColor: minKamers === k ? 'rgba(255,107,43,0.1)' : '#1A1A28', color: minKamers === k ? '#FF6B2B' : '#8888AA', fontWeight: 700, cursor: 'pointer', fontSize: '15px' }}>
                   {k === 5 ? '5+' : k}
                 </button>
               ))}
@@ -266,21 +288,7 @@ setGebruiker(user)
             <label style={labelStijl}>Type woning</label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {TYPES.map(type => (
-                <button
-                  key={type}
-                  onClick={() => toggleType(type)}
-                  style={{
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border: typeWoning.includes(type) ? '2px solid #FF6B2B' : '1px solid #2A2A42',
-                    backgroundColor: typeWoning.includes(type) ? 'rgba(255,107,43,0.1)' : '#1A1A28',
-                    color: typeWoning.includes(type) ? '#FF6B2B' : '#8888AA',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    textTransform: 'capitalize',
-                  }}
-                >
+                <button key={type} onClick={() => toggleType(type)} style={{ padding: '12px', borderRadius: '10px', border: typeWoning.includes(type) ? '2px solid #FF6B2B' : '1px solid #2A2A42', backgroundColor: typeWoning.includes(type) ? 'rgba(255,107,43,0.1)' : '#1A1A28', color: typeWoning.includes(type) ? '#FF6B2B' : '#8888AA', fontWeight: 600, cursor: 'pointer', fontSize: '14px', textTransform: 'capitalize' }}>
                   {typeWoning.includes(type) ? '✓ ' : ''}{type}
                 </button>
               ))}
@@ -291,26 +299,8 @@ setGebruiker(user)
           <div>
             <label style={labelStijl}>Huisdieren toegestaan</label>
             <div style={{ display: 'flex', gap: '10px' }}>
-              {[
-                { waarde: 'ja', label: '✅ Ja' },
-                { waarde: 'nee', label: '❌ Nee' },
-                { waarde: 'maakt_niet_uit', label: '🤷 Maakt niet uit' },
-              ].map(opt => (
-                <button
-                  key={opt.waarde}
-                  onClick={() => setHuisdieren(opt.waarde)}
-                  style={{
-                    flex: 1,
-                    padding: '10px',
-                    borderRadius: '10px',
-                    border: huisdieren === opt.waarde ? '2px solid #FF6B2B' : '1px solid #2A2A42',
-                    backgroundColor: huisdieren === opt.waarde ? 'rgba(255,107,43,0.1)' : '#1A1A28',
-                    color: huisdieren === opt.waarde ? '#FF6B2B' : '#8888AA',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                  }}
-                >
+              {[{ waarde: 'ja', label: '✅ Ja' }, { waarde: 'nee', label: '❌ Nee' }, { waarde: 'maakt_niet_uit', label: '🤷 Maakt niet uit' }].map(opt => (
+                <button key={opt.waarde} onClick={() => setHuisdieren(opt.waarde)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: huisdieren === opt.waarde ? '2px solid #FF6B2B' : '1px solid #2A2A42', backgroundColor: huisdieren === opt.waarde ? 'rgba(255,107,43,0.1)' : '#1A1A28', color: huisdieren === opt.waarde ? '#FF6B2B' : '#8888AA', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
                   {opt.label}
                 </button>
               ))}
@@ -321,26 +311,8 @@ setGebruiker(user)
           <div>
             <label style={labelStijl}>Gemeubileerd</label>
             <div style={{ display: 'flex', gap: '10px' }}>
-              {[
-                { waarde: 'ja', label: '🛋️ Ja' },
-                { waarde: 'nee', label: '📦 Nee' },
-                { waarde: 'maakt_niet_uit', label: '🤷 Maakt niet uit' },
-              ].map(opt => (
-                <button
-                  key={opt.waarde}
-                  onClick={() => setGemeubileerd(opt.waarde)}
-                  style={{
-                    flex: 1,
-                    padding: '10px',
-                    borderRadius: '10px',
-                    border: gemeubileerd === opt.waarde ? '2px solid #FF6B2B' : '1px solid #2A2A42',
-                    backgroundColor: gemeubileerd === opt.waarde ? 'rgba(255,107,43,0.1)' : '#1A1A28',
-                    color: gemeubileerd === opt.waarde ? '#FF6B2B' : '#8888AA',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                  }}
-                >
+              {[{ waarde: 'ja', label: '🛋️ Ja' }, { waarde: 'nee', label: '📦 Nee' }, { waarde: 'maakt_niet_uit', label: '🤷 Maakt niet uit' }].map(opt => (
+                <button key={opt.waarde} onClick={() => setGemeubileerd(opt.waarde)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: gemeubileerd === opt.waarde ? '2px solid #FF6B2B' : '1px solid #2A2A42', backgroundColor: gemeubileerd === opt.waarde ? 'rgba(255,107,43,0.1)' : '#1A1A28', color: gemeubileerd === opt.waarde ? '#FF6B2B' : '#8888AA', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
                   {opt.label}
                 </button>
               ))}
@@ -350,21 +322,10 @@ setGebruiker(user)
           {/* Opslaan knop */}
           <button
             onClick={handleOpslaan}
-            disabled={opslaan}
-            style={{
-              width: '100%',
-              backgroundColor: opgeslagen ? '#22C55E' : opslaan ? '#8888AA' : '#FF6B2B',
-              color: 'white',
-              border: 'none',
-              padding: '16px',
-              borderRadius: '12px',
-              fontSize: '16px',
-              fontWeight: 700,
-              cursor: opslaan ? 'not-allowed' : 'pointer',
-              marginTop: '8px',
-            }}
+            disabled={opslaan || steden.length === 0}
+            style={{ width: '100%', backgroundColor: opgeslagen ? '#22C55E' : opslaan ? '#8888AA' : steden.length === 0 ? '#2A2A42' : '#FF6B2B', color: 'white', border: 'none', padding: '16px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, cursor: opslaan || steden.length === 0 ? 'not-allowed' : 'pointer', marginTop: '8px' }}
           >
-            {opgeslagen ? '✅ Opgeslagen!' : opslaan ? 'Bezig...' : 'Woonwensen opslaan'}
+            {opgeslagen ? '✅ Opgeslagen!' : opslaan ? 'Bezig...' : steden.length === 0 ? 'Kies minimaal één plaats' : 'Woonwensen opslaan'}
           </button>
 
         </div>
