@@ -16,54 +16,29 @@ export default function Dashboard() {
     async function laadData() {
       const supabase = maakSupabaseClient()
       const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) {
-        router.push('/login')
-        return
-      }
-
+      if (!user) { router.push('/login'); return }
       setGebruiker(user)
 
-      // Haal woonwensen op
       const { data: woonwensData } = await supabase
-        .from('woonwensen')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-
+        .from('woonwensen').select('*').eq('user_id', user.id).single()
       setWoonwensen(woonwensData)
 
       if (woonwensData) {
-        // Haal woningen op die passen bij woonwensen
-        let query = supabase
-          .from('gevonden_woningen')
-          .select('*')
+        let query = supabase.from('gevonden_woningen').select('*')
           .eq('actief', true)
           .gte('prijs', woonwensData.min_prijs)
           .lte('prijs', woonwensData.max_prijs)
-          .order('gevonden_op', { ascending: false })
-          .limit(20)
-
-        if (woonwensData.stad) {
-          query = query.ilike('stad', `%${woonwensData.stad}%`)
-        }
-
-        const { data: woningData } = await query
-        setWoningen(woningData || [])
+          .order('gevonden_op', { ascending: false }).limit(20)
+        if (woonwensData.stad) query = query.ilike('stad', `%${woonwensData.stad}%`)
+        const { data } = await query
+        setWoningen(data || [])
       } else {
-        // Geen woonwensen? Toon alle woningen
-        const { data: woningData } = await supabase
-          .from('gevonden_woningen')
-          .select('*')
-          .eq('actief', true)
-          .order('gevonden_op', { ascending: false })
-          .limit(20)
-        setWoningen(woningData || [])
+        const { data } = await supabase.from('gevonden_woningen').select('*')
+          .eq('actief', true).order('gevonden_op', { ascending: false }).limit(20)
+        setWoningen(data || [])
       }
-
       setLaden(false)
     }
-
     laadData()
   }, [])
 
@@ -74,17 +49,14 @@ export default function Dashboard() {
   }
 
   function tijdGeleden(datum: string) {
-    const nu = new Date()
-    const d = new Date(datum)
-    const uren = Math.floor((nu.getTime() - d.getTime()) / (1000 * 60 * 60))
+    const uren = Math.floor((new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60))
     if (uren < 1) return 'zojuist'
-    if (uren < 24) return `${uren} uur geleden`
-    return `${Math.floor(uren / 24)} dagen geleden`
+    if (uren < 24) return `${uren}u geleden`
+    return `${Math.floor(uren / 24)}d geleden`
   }
 
   function isNieuw(datum: string) {
-    const uren = (new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60)
-    return uren < 24
+    return (new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60) < 24
   }
 
   if (laden) {
@@ -103,154 +75,134 @@ export default function Dashboard() {
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
 
       {/* Navigatie */}
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px' }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Link href="/profiel" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '14px' }}>
-            ⚙️ Woonwensen
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link href="/profiel" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+            ⚙️ Wensen
           </Link>
-          <button onClick={uitloggen} style={{ backgroundColor: 'transparent', border: '1px solid #2A2A42', color: '#8888AA', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' }}>
+          <button onClick={uitloggen} style={{ backgroundColor: 'transparent', border: '1px solid #2A2A42', color: '#8888AA', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', whiteSpace: 'nowrap' }}>
             Uitloggen
           </button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 32px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 16px' }}>
 
         {/* Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
+        <div style={{ marginBottom: '20px' }}>
+          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(22px, 5vw, 32px)', color: '#F0F0F8', marginBottom: '6px' }}>
             Welkom terug! 👋
           </h1>
-          <p style={{ color: '#8888AA', fontSize: '16px' }}>
+          <p style={{ color: '#8888AA', fontSize: '14px' }}>
             {woonwensen
-              ? `Je zoekt in ${woonwensen.stad} · €${woonwensen.min_prijs} - €${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
-              : 'Stel je woonwensen in om gepersonaliseerde resultaten te zien'
+              ? `${woonwensen.stad} · €${woonwensen.min_prijs}–€${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
+              : 'Stel je woonwensen in voor gepersonaliseerde resultaten'
             }
           </p>
         </div>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
           {[
-            { label: 'Gevonden woningen', waarde: woningen.length, kleur: '#FF6B2B' },
+            { label: 'Gevonden', waarde: woningen.length, kleur: '#FF6B2B' },
             { label: 'Nieuw vandaag', waarde: woningen.filter(w => isNieuw(w.gevonden_op)).length, kleur: '#FFB800' },
             { label: 'Platforms', waarde: 3, kleur: '#8888AA' },
           ].map((stat) => (
-            <div key={stat.label} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '16px', padding: '24px' }}>
-              <div style={{ color: stat.kleur, fontSize: '36px', fontWeight: 800, marginBottom: '4px' }}>{stat.waarde}</div>
-              <div style={{ color: '#8888AA', fontSize: '14px' }}>{stat.label}</div>
+            <div key={stat.label} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '12px', padding: '14px 10px' }}>
+              <div style={{ color: stat.kleur, fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 800, marginBottom: '2px' }}>{stat.waarde}</div>
+              <div style={{ color: '#8888AA', fontSize: '11px' }}>{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Woonwensen banner als niet ingesteld */}
+        {/* Woonwensen banner */}
         {!woonwensen && (
-          <div style={{ backgroundColor: 'rgba(255,107,43,0.08)', border: '1px solid rgba(255,107,43,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <div style={{ color: '#F0F0F8', fontWeight: 600, marginBottom: '4px' }}>⚡ Stel je woonwensen in</div>
-              <div style={{ color: '#8888AA', fontSize: '14px' }}>Geef aan wat je zoekt zodat we de juiste woningen voor je vinden</div>
-            </div>
-            <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '12px 24px', borderRadius: '10px', fontSize: '14px', whiteSpace: 'nowrap' }}>
+          <div style={{ backgroundColor: 'rgba(255,107,43,0.08)', border: '1px solid rgba(255,107,43,0.2)', borderRadius: '14px', padding: '16px', marginBottom: '20px' }}>
+            <div style={{ color: '#F0F0F8', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>⚡ Stel je woonwensen in</div>
+            <div style={{ color: '#8888AA', fontSize: '13px', marginBottom: '12px' }}>Geef aan wat je zoekt zodat we de juiste woningen vinden</div>
+            <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '10px 20px', borderRadius: '8px', fontSize: '13px' }}>
               Nu instellen →
             </Link>
           </div>
         )}
 
-        {/* Woonwensen samenvatting als wel ingesteld */}
+        {/* Woonwensen samenvatting */}
         {woonwensen && (
-          <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '16px', padding: '20px 24px', marginBottom: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+          <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               {[
-                { label: '📍 Stad', waarde: woonwensen.stad },
-                { label: '💰 Budget', waarde: `€${woonwensen.min_prijs} - €${woonwensen.max_prijs}` },
-                { label: '🚪 Kamers', waarde: `min. ${woonwensen.min_kamers}` },
-                { label: '📐 Straal', waarde: `${woonwensen.straal_km} km` },
+                { label: '📍', waarde: woonwensen.stad },
+                { label: '💰', waarde: `€${woonwensen.min_prijs}–€${woonwensen.max_prijs}` },
+                { label: '🚪', waarde: `min. ${woonwensen.min_kamers}` },
               ].map(item => (
                 <div key={item.label}>
-                  <div style={{ color: '#55557A', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>{item.label}</div>
-                  <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '15px' }}>{item.waarde}</div>
+                  <div style={{ color: '#55557A', fontSize: '10px', marginBottom: '1px' }}>{item.label}</div>
+                  <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '13px' }}>{item.waarde}</div>
                 </div>
               ))}
             </div>
-            <Link href="/profiel" style={{ color: '#FF6B2B', textDecoration: 'none', fontSize: '14px', fontWeight: 600 }}>
+            <Link href="/profiel" style={{ color: '#FF6B2B', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
               Aanpassen →
             </Link>
           </div>
         )}
 
-        {/* Woningen grid */}
-        <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '22px', color: '#F0F0F8', marginBottom: '24px' }}>
+        {/* Woningen */}
+        <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px' }}>
           {woonwensen ? `Woningen in ${woonwensen.stad}` : 'Alle woningen'}
         </h2>
 
         {woningen.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 32px', backgroundColor: '#11111C', borderRadius: '20px', border: '1px solid #2A2A42' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏠</div>
-            <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '18px', marginBottom: '8px' }}>
-              {woonwensen ? `Geen woningen gevonden in ${woonwensen.stad}` : 'Nog geen woningen gevonden'}
+          <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
+            <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
+            <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
+              {woonwensen ? `Geen woningen in ${woonwensen.stad}` : 'Nog geen woningen'}
             </div>
-            <div style={{ color: '#8888AA', marginBottom: '24px' }}>
-              {woonwensen ? 'Probeer je zoekcriteria aan te passen' : 'Stel je woonwensen in en we gaan direct voor je zoeken'}
+            <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
+              {woonwensen ? 'Pas je zoekcriteria aan' : 'Stel woonwensen in'}
             </div>
-            <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '12px 24px', borderRadius: '10px' }}>
+            <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '10px 20px', borderRadius: '10px', fontSize: '14px' }}>
               Woonwensen aanpassen
             </Link>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
             {woningen.map((woning) => (
-              <div key={woning.id} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '16px', overflow: 'hidden' }}>
-                <div style={{ position: 'relative', height: '200px', backgroundColor: '#1A1A28' }}>
-                  {woning.foto_url ? (
-                    <img src={woning.foto_url} alt={woning.titel} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>🏠</div>
-                  )}
+              <div key={woning.id} style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', height: '180px', backgroundColor: '#1A1A28' }}>
+                  {woning.foto_url
+                    ? <img src={woning.foto_url} alt={woning.titel} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px' }}>🏠</div>
+                  }
                   {isNieuw(woning.gevonden_op) && (
-                    <div style={{ position: 'absolute', top: '12px', left: '12px', backgroundColor: '#FF6B2B', color: 'white', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '6px' }}>
-                      NIEUW
-                    </div>
+                    <div style={{ position: 'absolute', top: '10px', left: '10px', backgroundColor: '#FF6B2B', color: 'white', fontSize: '10px', fontWeight: 800, padding: '3px 8px', borderRadius: '5px' }}>NIEUW</div>
                   )}
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#F0F0F8', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '6px', textTransform: 'capitalize' }}>
+                  <div style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#F0F0F8', fontSize: '10px', fontWeight: 600, padding: '3px 8px', borderRadius: '5px', textTransform: 'capitalize' }}>
                     {woning.platform}
                   </div>
                 </div>
 
-                <div style={{ padding: '20px' }}>
-                  <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '16px', color: '#F0F0F8', marginBottom: '8px', lineHeight: 1.3 }}>
+                <div style={{ padding: '14px' }}>
+                  <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3 }}>
                     {woning.titel}
                   </h3>
                   {woning.adres && (
-                    <p style={{ color: '#8888AA', fontSize: '13px', marginBottom: '12px' }}>
+                    <p style={{ color: '#8888AA', fontSize: '12px', marginBottom: '10px' }}>
                       📍 {woning.adres}{woning.stad ? `, ${woning.stad}` : ''}
                     </p>
                   )}
-                  <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                    {woning.prijs && (
-                      <span style={{ color: '#FF6B2B', fontWeight: 700, fontSize: '18px' }}>
-                        €{woning.prijs},-/mnd
-                      </span>
-                    )}
-                    {woning.kamers && (
-                      <span style={{ color: '#8888AA', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                        🚪 {woning.kamers} kamers
-                      </span>
-                    )}
-                    {woning.oppervlakte && (
-                      <span style={{ color: '#8888AA', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                        📐 {woning.oppervlakte}m²
-                      </span>
-                    )}
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                    {woning.prijs && <span style={{ color: '#FF6B2B', fontWeight: 700, fontSize: '16px' }}>€{woning.prijs},-/mnd</span>}
+                    {woning.kamers && <span style={{ color: '#8888AA', fontSize: '13px' }}>🚪 {woning.kamers}</span>}
+                    {woning.oppervlakte && <span style={{ color: '#8888AA', fontSize: '13px' }}>📐 {woning.oppervlakte}m²</span>}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#55557A', fontSize: '12px' }}>
-                      {tijdGeleden(woning.gevonden_op)}
-                    </span>
-                    <a href={woning.url} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '13px', padding: '8px 16px', borderRadius: '8px' }}>
+                    <span style={{ color: '#55557A', fontSize: '11px' }}>{tijdGeleden(woning.gevonden_op)}</span>
+                    <a href={woning.url} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '13px', padding: '7px 14px', borderRadius: '8px' }}>
                       Bekijk →
                     </a>
                   </div>
