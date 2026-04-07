@@ -7,6 +7,10 @@
   --geel: #FFB800;
 }
 
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 body {
   background-color: #08080F;
   color: #F0F0F8;
@@ -15,7 +19,9 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', sans-serif;
+  overflow: visible;
+  padding-bottom: 4px;
 }
 
 ::selection {
@@ -33,4 +39,7 @@ h1, h2, h3, h4 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  overflow: visible;
+  display: inline-block;
+  padding-bottom: 6px;
 }
