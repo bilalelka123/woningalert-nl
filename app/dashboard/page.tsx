@@ -33,8 +33,39 @@ export default function Dashboard() {
         .limit(100)
       setAlleWoningen(alle || [])
 
-      // Geen filter — toon alle woningen als matches
-      setWoningen(alle || [])
+      if (woonwensData) {
+        const steden = Array.isArray(woonwensData.stad) ? woonwensData.stad : [woonwensData.stad]
+        const alleSteden = steden.length === 0
+
+        // Filter alleen op stad — prijs en kamers zijn vaak NULL dus die negeren we
+        const matches = (alle || []).filter(woning => {
+          // Stad filter — als heel Noord-Brabant dan alles tonen
+          if (!alleSteden) {
+            const woningStad = woning.stad?.toLowerCase() || ''
+            const stadMatch = steden.some((s: string) =>
+              woningStad.includes(s.toLowerCase()) || s.toLowerCase().includes(woningStad)
+            )
+            if (!stadMatch) return false
+          }
+
+          // Prijs filter — alleen toepassen als woning een prijs heeft
+          if (woning.prijs !== null) {
+            if (woning.prijs < woonwensData.min_prijs) return false
+            if (woning.prijs > woonwensData.max_prijs) return false
+          }
+
+          // Kamers filter — alleen toepassen als woning kamers heeft
+          if (woning.kamers !== null && woonwensData.min_kamers > 1) {
+            if (woning.kamers < woonwensData.min_kamers) return false
+          }
+
+          return true
+        })
+
+        setWoningen(matches)
+      } else {
+        setWoningen(alle || [])
+      }
       setLaden(false)
     }
     laadData()
@@ -169,7 +200,7 @@ export default function Dashboard() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', letterSpacing: '-0.3px', margin: 0 }}>
-            {toonAlles ? `Alle woningen (${alleWoningen.length})` : `Woningen (${woningen.length})`}
+            {toonAlles ? `Alle woningen (${alleWoningen.length})` : `Mijn matches (${woningen.length})`}
           </h2>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={() => setToonAlles(false)} style={{
