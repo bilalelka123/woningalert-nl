@@ -33,30 +33,8 @@ export default function Dashboard() {
         .limit(100)
       setAlleWoningen(alle || [])
 
-      // Haal gefilterde woningen op
-      if (woonwensData) {
-        let query = supabase.from('gevonden_woningen').select('*')
-          .eq('actief', true)
-          .gte('prijs', woonwensData.min_prijs)
-          .lte('prijs', woonwensData.max_prijs)
-          .order('gevonden_op', { ascending: false }).limit(50)
-
-        // Alleen filteren op stad als er steden geselecteerd zijn
-        if (woonwensData.stad && Array.isArray(woonwensData.stad) && woonwensData.stad.length > 0) {
-          const steden = woonwensData.stad
-          if (steden.length === 1) {
-            query = query.ilike('stad', `%${steden[0]}%`)
-          } else {
-            query = query.or(steden.map((s: string) => `stad.ilike.%${s}%`).join(','))
-          }
-        }
-        // Lege array = heel Noord-Brabant, geen stadfilter
-
-        const { data } = await query
-        setWoningen(data || [])
-      } else {
-        setWoningen(alle || [])
-      }
+      // Geen filter — toon alle woningen als matches
+      setWoningen(alle || [])
       setLaden(false)
     }
     laadData()
@@ -191,39 +169,33 @@ export default function Dashboard() {
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', letterSpacing: '-0.3px', margin: 0 }}>
-            {toonAlles ? `Alle woningen (${alleWoningen.length})` : `Jouw matches (${woningen.length})`}
+            {toonAlles ? `Alle woningen (${alleWoningen.length})` : `Woningen (${woningen.length})`}
           </h2>
-          {woonwensen && (
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => setToonAlles(false)} style={{
-                padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                backgroundColor: !toonAlles ? '#FF6B2B' : '#1A1A28',
-                color: !toonAlles ? 'white' : '#8888AA',
-                border: !toonAlles ? 'none' : '1px solid #2A2A42',
-              }}>
-                Mijn matches
-              </button>
-              <button onClick={() => setToonAlles(true)} style={{
-                padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                backgroundColor: toonAlles ? '#FF6B2B' : '#1A1A28',
-                color: toonAlles ? 'white' : '#8888AA',
-                border: toonAlles ? 'none' : '1px solid #2A2A42',
-              }}>
-                Alles tonen
-              </button>
-            </div>
-          )}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setToonAlles(false)} style={{
+              padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              backgroundColor: !toonAlles ? '#FF6B2B' : '#1A1A28',
+              color: !toonAlles ? 'white' : '#8888AA',
+              border: !toonAlles ? 'none' : '1px solid #2A2A42',
+            }}>
+              Mijn matches
+            </button>
+            <button onClick={() => setToonAlles(true)} style={{
+              padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              backgroundColor: toonAlles ? '#FF6B2B' : '#1A1A28',
+              color: toonAlles ? 'white' : '#8888AA',
+              border: toonAlles ? 'none' : '1px solid #2A2A42',
+            }}>
+              Alles tonen
+            </button>
+          </div>
         </div>
 
         {getoondWoningen.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
-            <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
-              Geen woningen gevonden
-            </div>
-            <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
-              Pas je woonwensen aan of klik op "Alles tonen"
-            </div>
+            <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>Geen woningen gevonden</div>
+            <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>Pas je woonwensen aan of klik op "Alles tonen"</div>
             <Link href="/profiel" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '10px 20px', borderRadius: '10px', fontSize: '14px' }}>
               Woonwensen aanpassen
             </Link>
@@ -252,7 +224,10 @@ export default function Dashboard() {
                     📍 {woning.adres ? `${woning.adres}, ` : ''}{woning.stad}
                   </p>
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                    {woning.prijs && <span style={{ color: '#FF6B2B', fontWeight: 700, fontSize: '16px' }}>€{woning.prijs},-/mnd</span>}
+                    {woning.prijs
+                      ? <span style={{ color: '#FF6B2B', fontWeight: 700, fontSize: '16px' }}>€{woning.prijs},-/mnd</span>
+                      : <span style={{ color: '#8888AA', fontSize: '14px' }}>Prijs op aanvraag</span>
+                    }
                     {woning.kamers && <span style={{ color: '#8888AA', fontSize: '13px' }}>🚪 {woning.kamers}</span>}
                     {woning.oppervlakte && <span style={{ color: '#8888AA', fontSize: '13px' }}>📐 {woning.oppervlakte}m²</span>}
                   </div>
