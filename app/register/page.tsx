@@ -41,16 +41,22 @@ export default function RegisterPagina() {
       setFout('Dit email adres is al in gebruik.')
       setLaden(false)
     } else {
+      // Stuur welkomstmail
+      await fetch('/api/welkomstmail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ naam, email }),
+      })
       router.push('/dashboard')
     }
   }
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', fontFamily: "'Inter', sans-serif" }}>
       <div style={{ width: '100%', maxWidth: '440px' }}>
 
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '24px' }}>
+          <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '24px', letterSpacing: '-0.5px' }}>
             <span style={{ color: '#FF6B2B' }}>Woning</span>
             <span style={{ color: '#F0F0F8' }}>Alert NL</span>
           </Link>
@@ -76,7 +82,7 @@ export default function RegisterPagina() {
                 onChange={(e) => setNaam(e.target.value)}
                 placeholder="Jouw naam"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, fontFamily: "'Inter', sans-serif" }}
               />
             </div>
 
@@ -88,7 +94,7 @@ export default function RegisterPagina() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="jij@voorbeeld.nl"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, fontFamily: "'Inter', sans-serif" }}
               />
             </div>
 
@@ -100,14 +106,14 @@ export default function RegisterPagina() {
                 onChange={(e) => setWachtwoord(e.target.value)}
                 placeholder="Minimaal 6 tekens"
                 required
-                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const }}
+                style={{ width: '100%', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const, fontFamily: "'Inter', sans-serif" }}
               />
             </div>
 
             <button
               type="submit"
               disabled={laden}
-              style={{ width: '100%', backgroundColor: laden ? '#8888AA' : '#FF6B2B', color: 'white', border: 'none', padding: '14px', borderRadius: '10px', fontSize: '16px', fontWeight: 700, cursor: laden ? 'not-allowed' : 'pointer' }}
+              style={{ width: '100%', backgroundColor: laden ? '#8888AA' : '#FF6B2B', color: 'white', border: 'none', padding: '14px', borderRadius: '10px', fontSize: '16px', fontWeight: 700, cursor: laden ? 'not-allowed' : 'pointer', fontFamily: "'Inter', sans-serif" }}
             >
               {laden ? 'Account aanmaken...' : 'Gratis account aanmaken'}
             </button>
