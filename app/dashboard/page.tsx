@@ -72,7 +72,7 @@ export default function Dashboard() {
 
   if (laden) {
     return (
-      <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans', sans-serif" }}>
+      <main style={{ minHeight: '100vh', backgroundColor: '#08080F', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', sans-serif" }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: '40px', height: '40px', border: '3px solid #2A2A42', borderTop: '3px solid #FF6B2B', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }}></div>
           <div style={{ color: '#8888AA' }}>Laden...</div>
@@ -83,24 +83,18 @@ export default function Dashboard() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
-      {/* Navigatie */}
       <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-       <Link href="/dashboard" style={{ textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-  <span className="logo-tekst">
-    <span style={{ color: '#FF6B2B' }}>Woning</span>
-    <span style={{ color: '#F0F0F8' }}>Alert NL</span>
-  </span>
-</Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-          <Link href="/woning-plaatsen" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '12px', whiteSpace: 'nowrap', display: 'none' }} className="md:block">
-            Woning plaatsen
-          </Link>
-          <Link href="/profiel" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '12px', whiteSpace: 'nowrap' }}>
+        <Link href="/dashboard" style={{ textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0, letterSpacing: '-0.5px' }}>
+          <span style={{ color: '#FF6B2B' }}>Woning</span>
+          <span style={{ color: '#F0F0F8' }}>Alert NL</span>
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <Link href="/profiel" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '13px', fontWeight: 600, padding: '6px 14px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
             ⚙ Wensen
           </Link>
-          <button onClick={uitloggen} style={{ backgroundColor: 'transparent', border: '1px solid #2A2A42', color: '#8888AA', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+          <button onClick={uitloggen} style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', padding: '6px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
             Uitloggen
           </button>
         </div>
@@ -108,7 +102,6 @@ export default function Dashboard() {
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 16px' }}>
 
-        {/* Header */}
         <div style={{ marginBottom: '20px' }}>
           <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(22px, 5vw, 32px)', color: '#F0F0F8', marginBottom: '6px' }}>
             Welkom terug! 👋
@@ -121,7 +114,6 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
           {[
             { label: 'Gevonden', waarde: woningen.length, kleur: '#FF6B2B' },
@@ -135,7 +127,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Woonwensen banner */}
         {!woonwensen && (
           <div style={{ backgroundColor: 'rgba(255,107,43,0.08)', border: '1px solid rgba(255,107,43,0.2)', borderRadius: '14px', padding: '16px', marginBottom: '20px' }}>
             <div style={{ color: '#F0F0F8', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>⚡ Stel je woonwensen in</div>
@@ -146,7 +137,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Woonwensen samenvatting */}
         {woonwensen && (
           <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -167,7 +157,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Verhuurder banner */}
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <div style={{ color: '#8888AA', fontSize: '13px' }}>🏠 Heb je een woning te huur? Bereik direct honderden zoekers.</div>
           <Link href="/woning-plaatsen" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '8px 16px', borderRadius: '8px', fontSize: '13px', whiteSpace: 'nowrap' }}>
@@ -175,7 +164,6 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Woningen */}
         <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px' }}>
           {woonwensen ? `Woningen in ${stedenTekst(woonwensen.stad)}` : 'Alle woningen'}
         </h2>

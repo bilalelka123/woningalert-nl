@@ -93,7 +93,7 @@ export default function WoningPlaatsen() {
             Woning ingediend!
           </h1>
           <p style={{ color: '#8888AA', marginBottom: '32px', lineHeight: 1.6 }}>
-            Bedankt! We controleren je woning en plaatsen hem zo snel mogelijk op WoningAlert NL. Huurders in jouw regio worden direct gewaarschuwd.
+            Bedankt! We controleren je woning en plaatsen hem zo snel mogelijk op WoningAlert NL.
           </p>
           <Link href="/" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, padding: '14px 28px', borderRadius: '12px', fontSize: '15px' }}>
             Terug naar home
@@ -106,12 +106,12 @@ export default function WoningPlaatsen() {
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', lineHeight: '1.5', paddingBottom: '2px' }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <Link href="/" style={{ textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0, letterSpacing: '-0.5px' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </Link>
-        <Link href="/login" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
+        <Link href="/login" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '13px', fontWeight: 600, padding: '6px 14px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
           Inloggen
         </Link>
       </nav>
@@ -137,9 +137,7 @@ export default function WoningPlaatsen() {
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
           <div>
-            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
-              Jouw gegevens
-            </h2>
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>Jouw gegevens</h2>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
                 <label style={labelStijl}>Naam</label>
@@ -158,13 +156,11 @@ export default function WoningPlaatsen() {
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '20px' }}>
               Woninggegevens <span style={{ color: '#FF6B2B', fontSize: '13px' }}>* verplicht</span>
             </h2>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <label style={labelStijl}>Titel van de woning *</label>
+                <label style={labelStijl}>Titel *</label>
                 <input type="text" value={titel} onChange={e => setTitel(e.target.value)} placeholder="Ruim appartement centrum Den Bosch" style={invoerStijl} />
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label style={labelStijl}>Adres *</label>
@@ -177,7 +173,6 @@ export default function WoningPlaatsen() {
                   </select>
                 </div>
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
                 <div>
                   <label style={labelStijl}>Huurprijs/mnd *</label>
@@ -192,7 +187,6 @@ export default function WoningPlaatsen() {
                   <input type="number" value={oppervlakte} onChange={e => setOppervlakte(e.target.value)} placeholder="75" style={invoerStijl} />
                 </div>
               </div>
-
               <div>
                 <label style={labelStijl}>Type woning</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px' }}>
@@ -209,16 +203,14 @@ export default function WoningPlaatsen() {
                   ))}
                 </div>
               </div>
-
               <div>
                 <label style={labelStijl}>Link naar advertentie *</label>
                 <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://www.pararius.nl/..." style={invoerStijl} />
-                <p style={{ color: '#55557A', fontSize: '12px', marginTop: '6px' }}>Link naar je eigen website, Pararius, Funda of een andere advertentie</p>
+                <p style={{ color: '#55557A', fontSize: '12px', marginTop: '6px' }}>Link naar je eigen website of advertentie</p>
               </div>
-
               <div>
                 <label style={labelStijl}>Beschrijving</label>
-                <textarea value={beschrijving} onChange={e => setBeschrijving(e.target.value)} placeholder="Beschrijf de woning, bijzonderheden, voorwaarden..." rows={4}
+                <textarea value={beschrijving} onChange={e => setBeschrijving(e.target.value)} placeholder="Beschrijf de woning..." rows={4}
                   style={{ ...invoerStijl, resize: 'vertical' as const }} />
               </div>
             </div>
@@ -241,7 +233,6 @@ export default function WoningPlaatsen() {
           <p style={{ color: '#55557A', fontSize: '12px', textAlign: 'center' }}>
             We controleren elke woning handmatig voor publicatie. Gemiddeld binnen 24 uur online.
           </p>
-
         </div>
       </div>
     </main>

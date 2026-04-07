@@ -122,13 +122,11 @@ export default function ProfielPagina() {
     <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
       <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <Link href="/dashboard" style={{ textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}>
-  <span className="logo-tekst">
-    <span style={{ color: '#FF6B2B' }}>Woning</span>
-    <span style={{ color: '#F0F0F8' }}>Alert NL</span>
-  </span>
-</Link>
-        <Link href="/dashboard" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+        <Link href="/dashboard" style={{ textDecoration: 'none', fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0, letterSpacing: '-0.5px' }}>
+          <span style={{ color: '#FF6B2B' }}>Woning</span>
+          <span style={{ color: '#F0F0F8' }}>Alert NL</span>
+        </Link>
+        <Link href="/dashboard" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '13px', fontWeight: 600, padding: '6px 14px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
           ← Dashboard
         </Link>
       </nav>

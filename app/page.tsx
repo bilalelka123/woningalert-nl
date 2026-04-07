@@ -6,10 +6,9 @@ export default function Landingspagina() {
 
       {/* Navigatie */}
       <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', lineHeight: '1.5', paddingBottom: '2px' }}>
-          <span style={{ color: '#FF6B2B' }}>Woning</span>
-          <span style={{ color: '#F0F0F8' }}>Alert NL</span>
-        </div>
+        <div className="logo" style={{ fontSize: '20px', color: '#F0F0F8' }}>
+  <span style={{ color: '#FF6B2B' }}>Woning</span>Alert NL
+</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
           <Link href="/woning-plaatsen" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
             Woning plaatsen
