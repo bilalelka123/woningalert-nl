@@ -2,22 +2,22 @@ import Link from 'next/link'
 
 export default function Landingspagina() {
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', backgroundColor: '#08080F', fontFamily: "'Inter', sans-serif" }}>
 
       {/* Navigatie */}
-      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '18px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+      <nav style={{ borderBottom: '1px solid #2A2A42', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', lineHeight: '1.5', paddingBottom: '2px' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          <Link href="/woning-plaatsen" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <Link href="/woning-plaatsen" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
             Woning plaatsen
           </Link>
-          <Link href="/login" style={{ color: '#8888AA', textDecoration: 'none', fontSize: '13px', whiteSpace: 'nowrap' }}>
+          <Link href="/login" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontSize: '14px', fontWeight: 600, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
             Inloggen
           </Link>
-          <Link href="/register" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 700, padding: '8px 16px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
+          <Link href="/register" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 700, padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
             Gratis starten
           </Link>
         </div>
@@ -41,7 +41,7 @@ export default function Landingspagina() {
           <Link href="/register" style={{ backgroundColor: '#FF6B2B', color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '16px', padding: '14px 32px', borderRadius: '12px' }}>
             Gratis beginnen →
           </Link>
-          <a href="#hoe-werkt-het" style={{ border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontWeight: 600, fontSize: '16px', padding: '14px 32px', borderRadius: '12px' }}>
+          <a href="#hoe-werkt-het" style={{ backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontWeight: 600, fontSize: '16px', padding: '14px 32px', borderRadius: '12px' }}>
             Hoe werkt het?
           </a>
         </div>
@@ -129,7 +129,7 @@ export default function Landingspagina() {
                   <li key={i} style={{ color: '#8888AA', fontSize: '15px' }}>{item}</li>
                 ))}
               </ul>
-              <Link href="/register" style={{ display: 'block', textAlign: 'center', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontWeight: 600, padding: '14px', borderRadius: '12px' }}>
+              <Link href="/register" style={{ display: 'block', textAlign: 'center', backgroundColor: '#1A1A28', border: '1px solid #2A2A42', color: '#F0F0F8', textDecoration: 'none', fontWeight: 600, padding: '14px', borderRadius: '12px' }}>
                 Gratis beginnen
               </Link>
             </div>
@@ -176,7 +176,7 @@ export default function Landingspagina() {
 
       {/* Footer */}
       <footer style={{ borderTop: '1px solid #2A2A42', padding: '40px 24px', textAlign: 'center' }}>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', marginBottom: '16px' }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '20px', marginBottom: '16px', lineHeight: '1.5', paddingBottom: '2px' }}>
           <span style={{ color: '#FF6B2B' }}>Woning</span>
           <span style={{ color: '#F0F0F8' }}>Alert NL</span>
         </div>
