@@ -27,6 +27,7 @@ export default function ProfielPagina() {
   const [woonwensId, setWoonwensId] = useState<string | null>(null)
 
   const [steden, setSteden] = useState<string[]>(['Den Bosch'])
+  const [alleSteden, setAlleSteden] = useState(false)
   const [straal, setStraal] = useState(10)
   const [minPrijs, setMinPrijs] = useState(400)
   const [maxPrijs, setMaxPrijs] = useState(1200)
@@ -46,8 +47,14 @@ export default function ProfielPagina() {
 
       if (data) {
         setWoonwensId(data.id)
-        if (Array.isArray(data.stad)) setSteden(data.stad)
-        else if (data.stad) setSteden([data.stad])
+        if (Array.isArray(data.stad) && data.stad.length === 0) {
+          setAlleSteden(true)
+          setSteden([])
+        } else if (Array.isArray(data.stad)) {
+          setSteden(data.stad)
+        } else if (data.stad) {
+          setSteden([data.stad])
+        }
         setStraal(data.straal_km)
         setMinPrijs(data.min_prijs)
         setMaxPrijs(data.max_prijs)
@@ -71,7 +78,7 @@ export default function ProfielPagina() {
 
     const gegevens = {
       user_id: user.id,
-      stad: steden,
+      stad: alleSteden ? [] : steden,
       straal_km: straal,
       min_prijs: minPrijs,
       max_prijs: maxPrijs,
@@ -95,6 +102,7 @@ export default function ProfielPagina() {
   }
 
   function toggleStad(stad: string) {
+    if (alleSteden) return
     setSteden(prev => prev.includes(stad) ? prev.filter(s => s !== stad) : [...prev, stad])
   }
 
@@ -132,7 +140,7 @@ export default function ProfielPagina() {
       </nav>
 
       <div style={{ maxWidth: '700px', margin: '0 auto', padding: '40px 16px' }}>
-        <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px' }}>
+        <h1 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: '32px', color: '#F0F0F8', marginBottom: '8px', letterSpacing: '-1px' }}>
           Mijn profiel
         </h1>
         <p style={{ color: '#8888AA', marginBottom: '40px' }}>
@@ -140,7 +148,7 @@ export default function ProfielPagina() {
         </p>
 
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', marginBottom: '24px' }}>
-          <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
             Persoonlijke gegevens
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -158,36 +166,53 @@ export default function ProfielPagina() {
           <p style={{ color: '#55557A', fontSize: '13px', marginTop: '12px' }}>Email adres kan niet worden gewijzigd.</p>
         </div>
 
-        <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
+        <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '20px', color: '#F0F0F8', marginBottom: '24px' }}>
           Woonwensen
         </h2>
 
         <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '20px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
 
+          {/* Steden */}
           <div>
-            <label style={labelStijl}>
-              Plaatsen <span style={{ color: '#FF6B2B' }}>
-                {steden.length === 0 ? '— kies minimaal één' : `(${steden.length} geselecteerd)`}
-              </span>
-            </label>
-            <p style={{ color: '#55557A', fontSize: '12px', marginBottom: '12px' }}>
-              Klik op meerdere plaatsen om alerts voor te ontvangen
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {STEDEN.map(s => (
-                <button key={s} onClick={() => toggleStad(s)} style={{
-                  padding: '8px 14px', borderRadius: '20px',
-                  border: steden.includes(s) ? '2px solid #FF6B2B' : '1px solid #2A2A42',
-                  backgroundColor: steden.includes(s) ? 'rgba(255,107,43,0.1)' : '#1A1A28',
-                  color: steden.includes(s) ? '#FF6B2B' : '#8888AA',
-                  fontWeight: 600, cursor: 'pointer', fontSize: '13px', whiteSpace: 'nowrap',
-                }}>
-                  {steden.includes(s) ? '✓ ' : ''}{s}
-                </button>
-              ))}
-            </div>
+            <label style={labelStijl}>Plaatsen</label>
+
+            {/* Heel Noord-Brabant toggle */}
+            <button
+              onClick={() => { setAlleSteden(!alleSteden); if (!alleSteden) setSteden([]) }}
+              style={{
+                width: '100%', padding: '12px 16px', borderRadius: '10px', marginBottom: '12px',
+                border: alleSteden ? '2px solid #FF6B2B' : '1px solid #2A2A42',
+                backgroundColor: alleSteden ? 'rgba(255,107,43,0.1)' : '#1A1A28',
+                color: alleSteden ? '#FF6B2B' : '#8888AA',
+                fontWeight: 600, cursor: 'pointer', fontSize: '14px', textAlign: 'left' as const,
+              }}
+            >
+              {alleSteden ? '✓ ' : ''}🗺️ Heel Noord-Brabant — alle plaatsen
+            </button>
+
+            {!alleSteden && (
+              <>
+                <p style={{ color: '#55557A', fontSize: '12px', marginBottom: '12px' }}>
+                  Of kies specifieke plaatsen {steden.length > 0 ? `(${steden.length} geselecteerd)` : '— kies er minimaal één'}
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {STEDEN.map(s => (
+                    <button key={s} onClick={() => toggleStad(s)} style={{
+                      padding: '8px 14px', borderRadius: '20px',
+                      border: steden.includes(s) ? '2px solid #FF6B2B' : '1px solid #2A2A42',
+                      backgroundColor: steden.includes(s) ? 'rgba(255,107,43,0.1)' : '#1A1A28',
+                      color: steden.includes(s) ? '#FF6B2B' : '#8888AA',
+                      fontWeight: 600, cursor: 'pointer', fontSize: '13px', whiteSpace: 'nowrap',
+                    }}>
+                      {steden.includes(s) ? '✓ ' : ''}{s}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
+          {/* Straal */}
           <div>
             <label style={labelStijl}>Straal: <span style={{ color: '#FF6B2B' }}>{straal} km</span></label>
             <input type="range" min={5} max={25} step={5} value={straal}
@@ -198,6 +223,7 @@ export default function ProfielPagina() {
             </div>
           </div>
 
+          {/* Prijs */}
           <div>
             <label style={labelStijl}>Huurprijs: <span style={{ color: '#FF6B2B' }}>€{minPrijs} – €{maxPrijs}</span></label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -214,6 +240,7 @@ export default function ProfielPagina() {
             </div>
           </div>
 
+          {/* Kamers */}
           <div>
             <label style={labelStijl}>Minimaal aantal kamers</label>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -231,6 +258,7 @@ export default function ProfielPagina() {
             </div>
           </div>
 
+          {/* Type woning */}
           <div>
             <label style={labelStijl}>Type woning</label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -248,6 +276,7 @@ export default function ProfielPagina() {
             </div>
           </div>
 
+          {/* Huisdieren */}
           <div>
             <label style={labelStijl}>Huisdieren toegestaan</label>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -265,6 +294,7 @@ export default function ProfielPagina() {
             </div>
           </div>
 
+          {/* Gemeubileerd */}
           <div>
             <label style={labelStijl}>Gemeubileerd</label>
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -282,14 +312,15 @@ export default function ProfielPagina() {
             </div>
           </div>
 
-          <button onClick={handleOpslaan} disabled={opslaan || steden.length === 0} style={{
+          {/* Opslaan */}
+          <button onClick={handleOpslaan} disabled={opslaan || (!alleSteden && steden.length === 0)} style={{
             width: '100%',
-            backgroundColor: opgeslagen ? '#22C55E' : opslaan ? '#8888AA' : steden.length === 0 ? '#2A2A42' : '#FF6B2B',
+            backgroundColor: opgeslagen ? '#22C55E' : opslaan ? '#8888AA' : (!alleSteden && steden.length === 0) ? '#2A2A42' : '#FF6B2B',
             color: 'white', border: 'none', padding: '16px', borderRadius: '12px',
             fontSize: '16px', fontWeight: 700,
-            cursor: opslaan || steden.length === 0 ? 'not-allowed' : 'pointer', marginTop: '8px',
+            cursor: opslaan || (!alleSteden && steden.length === 0) ? 'not-allowed' : 'pointer', marginTop: '8px',
           }}>
-            {opgeslagen ? '✅ Opgeslagen!' : opslaan ? 'Bezig...' : steden.length === 0 ? 'Kies minimaal één plaats' : 'Woonwensen opslaan'}
+            {opgeslagen ? '✅ Opgeslagen!' : opslaan ? 'Bezig...' : (!alleSteden && steden.length === 0) ? 'Kies minimaal één plaats' : 'Woonwensen opslaan'}
           </button>
 
         </div>
