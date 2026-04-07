@@ -1,0 +1,14 @@
+name: WoningAlert Meldingen
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Elk uur
+  workflow_dispatch:  # Ook handmatig te starten
+
+jobs:
+  stuur-meldingen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stuur email meldingen
+        run: |
+          curl -f "${{ secrets.APP_URL }}/api/meldingen" || exit 1
