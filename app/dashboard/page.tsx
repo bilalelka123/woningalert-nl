@@ -68,7 +68,11 @@ export default function Dashboard() {
     return (new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60) < 24
   }
 
-  const stedenTekst = (stad: any) => Array.isArray(stad) ? stad.join(', ') : stad
+  function stedenTekst(stad: any, max = 3) {
+    const lijst = Array.isArray(stad) ? stad : [stad]
+    if (lijst.length <= max) return lijst.join(', ')
+    return `${lijst.slice(0, max).join(', ')} +${lijst.length - max} meer`
+  }
 
   if (laden) {
     return (
@@ -103,7 +107,7 @@ export default function Dashboard() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 16px' }}>
 
         <div style={{ marginBottom: '20px' }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 'clamp(22px, 5vw, 32px)', color: '#F0F0F8', marginBottom: '6px' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 'clamp(22px, 5vw, 32px)', color: '#F0F0F8', marginBottom: '6px', letterSpacing: '-0.5px' }}>
             Welkom terug! 👋
           </h1>
           <p style={{ color: '#8888AA', fontSize: '14px' }}>
@@ -164,7 +168,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px' }}>
+        <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px', letterSpacing: '-0.3px' }}>
           {woonwensen ? `Woningen in ${stedenTekst(woonwensen.stad)}` : 'Alle woningen'}
         </h2>
 
@@ -198,7 +202,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div style={{ padding: '14px' }}>
-                  <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3 }}>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3, letterSpacing: '-0.3px' }}>
                     {woning.titel}
                   </h3>
                   {woning.adres && (
