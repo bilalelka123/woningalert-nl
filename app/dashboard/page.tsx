@@ -68,10 +68,16 @@ export default function Dashboard() {
     return (new Date().getTime() - new Date(datum).getTime()) / (1000 * 60 * 60) < 24
   }
 
-  function stedenTekst(stad: any, max = 3) {
+  // Korte versie van steden — max 2 tonen, daarna "+X meer"
+  function stedenKort(stad: any) {
     const lijst = Array.isArray(stad) ? stad : [stad]
-    if (lijst.length <= max) return lijst.join(', ')
-    return `${lijst.slice(0, max).join(', ')} +${lijst.length - max} meer`
+    if (lijst.length <= 2) return lijst.join(', ')
+    return `${lijst[0]}, ${lijst[1]} +${lijst.length - 2} meer`
+  }
+
+  // Volledige versie voor tooltip/title
+  function stedenVol(stad: any) {
+    return Array.isArray(stad) ? stad.join(', ') : stad
   }
 
   if (laden) {
@@ -112,7 +118,7 @@ export default function Dashboard() {
           </h1>
           <p style={{ color: '#8888AA', fontSize: '14px' }}>
             {woonwensen
-              ? `${stedenTekst(woonwensen.stad)} · €${woonwensen.min_prijs}–€${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
+              ? `${stedenKort(woonwensen.stad)} · €${woonwensen.min_prijs}–€${woonwensen.max_prijs} · min. ${woonwensen.min_kamers} kamer${woonwensen.min_kamers > 1 ? 's' : ''}`
               : 'Stel je woonwensen in voor gepersonaliseerde resultaten'
             }
           </p>
@@ -143,17 +149,19 @@ export default function Dashboard() {
 
         {woonwensen && (
           <div style={{ backgroundColor: '#11111C', border: '1px solid #2A2A42', borderRadius: '14px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              {[
-                { label: '📍', waarde: stedenTekst(woonwensen.stad) },
-                { label: '💰', waarde: `€${woonwensen.min_prijs}–€${woonwensen.max_prijs}` },
-                { label: '🚪', waarde: `min. ${woonwensen.min_kamers}` },
-              ].map(item => (
-                <div key={item.label}>
-                  <div style={{ color: '#55557A', fontSize: '10px', marginBottom: '1px' }}>{item.label}</div>
-                  <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '13px' }}>{item.waarde}</div>
-                </div>
-              ))}
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+              <div title={stedenVol(woonwensen.stad)}>
+                <div style={{ color: '#55557A', fontSize: '10px', marginBottom: '1px' }}>📍 Plaatsen</div>
+                <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '13px' }}>{stedenKort(woonwensen.stad)}</div>
+              </div>
+              <div>
+                <div style={{ color: '#55557A', fontSize: '10px', marginBottom: '1px' }}>💰 Prijs</div>
+                <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '13px' }}>€{woonwensen.min_prijs}–€{woonwensen.max_prijs}</div>
+              </div>
+              <div>
+                <div style={{ color: '#55557A', fontSize: '10px', marginBottom: '1px' }}>🚪 Kamers</div>
+                <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '13px' }}>min. {woonwensen.min_kamers}</div>
+              </div>
             </div>
             <Link href="/profiel" style={{ color: '#FF6B2B', textDecoration: 'none', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
               Aanpassen →
@@ -169,14 +177,14 @@ export default function Dashboard() {
         </div>
 
         <h2 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#F0F0F8', marginBottom: '16px', letterSpacing: '-0.3px' }}>
-          {woonwensen ? `Woningen in ${stedenTekst(woonwensen.stad)}` : 'Alle woningen'}
+          {woonwensen ? `Woningen in ${stedenKort(woonwensen.stad)}` : 'Alle woningen'}
         </h2>
 
         {woningen.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 16px', backgroundColor: '#11111C', borderRadius: '16px', border: '1px solid #2A2A42' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏠</div>
             <div style={{ color: '#F0F0F8', fontWeight: 600, fontSize: '16px', marginBottom: '8px' }}>
-              {woonwensen ? `Geen woningen in ${stedenTekst(woonwensen.stad)}` : 'Nog geen woningen'}
+              {woonwensen ? `Geen woningen in ${stedenKort(woonwensen.stad)}` : 'Nog geen woningen'}
             </div>
             <div style={{ color: '#8888AA', marginBottom: '20px', fontSize: '14px' }}>
               {woonwensen ? 'Pas je zoekcriteria aan' : 'Stel woonwensen in'}
@@ -202,7 +210,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div style={{ padding: '14px' }}>
-                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3, letterSpacing: '-0.3px' }}>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '15px', color: '#F0F0F8', marginBottom: '6px', lineHeight: 1.3, letterSpacing: '-0.2px' }}>
                     {woning.titel}
                   </h3>
                   {woning.adres && (
