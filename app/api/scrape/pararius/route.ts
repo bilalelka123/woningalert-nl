@@ -13,29 +13,44 @@ const STEDEN = [
   'roosendaal', 'bergen-op-zoom', 'oss', 'waalwijk', 'boxtel',
 ]
 
-function extraheerPrijs(blok: string): number | null {
-  // Vervang HTML entities
-  const schoon = blok
-    .replace(/&nbsp;/g, '')
-    .replace(/&#160;/g, '')
+function schoonTekst(tekst: string): string {
+  return tekst
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#160;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&euro;/g, '€')
     .replace(/\s+/g, ' ')
+    .trim()
+}
 
-  // Zoek naar prijspatronen — alleen 3-4 cijferige bedragen (huurprijs)
+function extraheerPrijs(blok: string): number | null {
+  const schoon = schoonTekst(blok)
+
+  // Zoek naar prijspatronen — alleen realistische huurprijzen
   const patronen = [
-    /listing-search-item__price[^>]*>[^€]*€\s*([\d.]+)/,
-    /price[^>]*>[^€]*€\s*([\d.]+)/,
-    /"price"\s*:\s*([\d]+)/,
+    /€\s*(\d[\d.]+)\s*per maand/i,
+    /(\d[\d.]+)\s*per maand/i,
+    /prijs[^€]*€\s*(\d[\d.]+)/i,
+    /€\s*(\d{3,4})/,
   ]
 
   for (const patroon of patronen) {
     const match = schoon.match(patroon)
     if (match) {
-      const prijs = parseInt(match[1].replace('.', ''))
-      // Alleen realistische huurprijzen (€400 - €5000)
+      const prijs = parseInt(match[1].replace('.', '').replace(',', ''))
       if (prijs >= 400 && prijs <= 5000) return prijs
     }
   }
   return null
+}
+
+function extraheerAdres(blok: string): string | null {
+  const schoon = schoonTekst(blok)
+  // Verwijder adressen met HTML rommel
+  if (schoon.includes('nbsp') || schoon.includes('&') || schoon.length > 100) return null
+
+  const match = schoon.match(/([A-Z][a-zéèëê]+(?:straat|laan|weg|plein|singel|kade|dijk|hof|park|boulevard|dreef|allee|avenue)\s+\d+[a-z]?)/i)
+  return match ? match[1] : null
 }
 
 export async function GET() {
@@ -51,6 +66,7 @@ export async function GET() {
       if (!res.ok) { fouten.push(`${stad}: HTTP ${res.status}`); continue }
 
       const html = await res.text()
+      const schoneHtml = schoonTekst(html)
       const stadNaam = stad.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
 
       const links = [...new Set(
@@ -70,33 +86,32 @@ export async function GET() {
 
         if (bestaand) continue
 
-        const positie = html.indexOf(pad)
-        const blok = html.slice(Math.max(0, positie - 500), positie + 2000)
+        const positie = schoneHtml.indexOf(pad)
+        const blok = schoneHtml.slice(Math.max(0, positie - 500), positie + 2000)
 
         const titelMatch = blok.match(/listing-search-item__title[^>]*>\s*<[^>]+>\s*([^<]+)/) ||
-                          blok.match(/<h2[^>]*>\s*<[^>]*>\s*([^<]+)/)
-        const oppervlakteMatch = blok.match(/([\d]+)\s*m²/)
-        const kamersMatch = blok.match(/([\d]+)\s*kamer/)
-        const fotoMatch = blok.match(/src="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp))"/)
+                          blok.match(/<h2[^>]*>\s*(?:<[^>]+>)?\s*([^<]+)/)
+        const fotoMatch = html.slice(Math.max(0, html.indexOf(pad) - 500), html.indexOf(pad) + 2000)
+                            .match(/src="(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp))"/)
 
         const titel = titelMatch
           ? titelMatch[1].trim()
           : pad.split('/').slice(-1)[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
 
         const prijs = extraheerPrijs(blok)
-        const oppervlakte = oppervlakteMatch ? parseInt(oppervlakteMatch[1]) : null
-        const kamers = kamersMatch ? parseInt(kamersMatch[1]) : null
-        const foto = fotoMatch ? fotoMatch[1] : null
+        const adres = extraheerAdres(blok)
+        const oppervlakteMatch = blok.match(/([\d]+)\s*m²/)
+        const kamersMatch = blok.match(/([\d]+)\s*kamer/)
 
         const { error } = await supabase.from('gevonden_woningen').insert({
           titel,
           url: woningUrl,
           prijs,
-          adres: null,
+          adres,
           stad: stadNaam,
-          oppervlakte,
-          kamers,
-          foto_url: foto,
+          oppervlakte: oppervlakteMatch ? parseInt(oppervlakteMatch[1]) : null,
+          kamers: kamersMatch ? parseInt(kamersMatch[1]) : null,
+          foto_url: fotoMatch ? fotoMatch[1] : null,
           platform: 'pararius',
           actief: true,
           gevonden_op: new Date().toISOString(),
